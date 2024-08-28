@@ -1,9 +1,9 @@
 terraform {
   backend "s3" {
-    bucket         = var.bucket_name
-    key            = var.key
+    bucket         = "given-cingco-devops-directive-tf-state"
+    key            = "Project9/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = var.dynamo_table_name
+    dynamodb_table = "terraform-state-locking"
     encrypt        = true
   }
   required_providers {
@@ -17,6 +17,6 @@ terraform {
 # Configure the AWS Provider
 provider "aws" {
   region = "us-east-1"
-  profile = var.profile
+  profile = "default"
 }
 

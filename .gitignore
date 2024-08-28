@@ -45,3 +45,6 @@ desktop.ini
 
 # Linux
 *~
+
+# Ignore the private key file
+ec2-key-pair.pem

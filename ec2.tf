@@ -4,7 +4,7 @@ module "ec2_instance" {
   name = "single-instance"
 
   instance_type          = "t2.micro"
-  key_name               = "icloud_given_KP"
+  key_name               = module.key_pair.key_pair_name
   monitoring             = false
   vpc_security_group_ids = [module.web_server_sg.security_group_id]
   subnet_id              = module.vpc.public_subnets[0]
@@ -13,17 +13,15 @@ module "ec2_instance" {
     user_data = <<-EOF
               #!/bin/bash
               yum update -y
-              yum install -y httpd php php-mysqlnd
-              amazon-linux-extras install -y php7.4
+              yum install -y httpd
               systemctl start httpd
               systemctl enable httpd
-              cd /var/www/html
-              wget https://wordpress.org/latest.tar.gz
-              tar -xzf latest.tar.gz
-              cp -r wordpress/* .
-              rm -rf wordpress latest.tar.gz
-              chown -R apache:apache /var/www/html
-              chmod -R 755 /var/www/html
+
+              # Get the private IP address of the EC2 instance
+              INSTANCE_IP=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
+
+              # Write the IP address to index.html
+              echo "<h1>EC2 Instance IP Address: $INSTANCE_IP</h1>" > /var/www/html/index.html
               EOF
 
   tags = {
